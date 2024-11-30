@@ -18,6 +18,7 @@ const {
   sourceVerify,
 } = require("./middleware/middleware");
 
+let server;
 let app = express();
 
 app.use(express.json());
@@ -37,12 +38,12 @@ app.use("/memories", favourite);
 app.use("/memories", file);
 
 if (process.env.RUNNING_ENV === "development") {
-  const server = http.createServer(app);
-  server.listen(process.env.SERVER_LISTEN_PORT);
+  server = http.createServer(app);
 } else if (process.env.RUNNING_ENV === "production") {
-  const server = https.createServer(app, {
+  server = https.createServer(app, {
     key: fs.readFileSync("./ssl/memories-food.online.key"),
     cert: fs.readFileSync("./ssl/memories-food.online_bundle.crt"),
   });
-  server.listen(process.env.SERVER_LISTEN_PORT);
 }
+
+server.listen(process.env.SERVER_LISTEN_PORT);
