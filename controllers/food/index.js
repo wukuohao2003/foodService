@@ -1,19 +1,24 @@
-const getFoodList = async (req, res) => {
-  try {
-    const foodList = await req.$db.query("SELECT * FROM food");
-    console.log(foodList);
-    res.status(200).json({
-      code: 200,
-      msg: "Success",
-      data: foodList,
-    });
-  } catch (err) {
-    res.status(500).json({
-      code: 500,
-      msg: "Error",
-      data: err,
-    });
-  }
+const getFoodList = (req, res) => {
+  req.sql(
+    {
+      sql: "SELECT * FROM food ",
+    },
+    (error, result) => {
+      if (error) {
+        res.status(500).json({
+          code: error.errno,
+          msg: error.sqlMessage,
+          data: {},
+        });
+      } else {
+        res.json({
+          code: 200,
+          msg: "Success",
+          data: result,
+        });
+      }
+    },
+  );
 };
 
 module.exports = {

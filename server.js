@@ -23,7 +23,7 @@ let app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/memories", express.static(path.join(__dirname, "source")));
 app.use(cors());
 app.use(logRequestDetails);
 app.use(sqlSupport);
@@ -41,8 +41,8 @@ if (process.env.RUNNING_ENV === "development") {
   server.listen(process.env.SERVER_LISTEN_PORT);
 } else if (process.env.RUNNING_ENV === "production") {
   const server = https.createServer(app, {
-    key: fs.readFileSync("./https/memories-food.online.key"),
-    cert: fs.readFileSync("./https/memories-food.online_bundle.crt"),
+    key: fs.readFileSync("./ssl/memories-food.online.key"),
+    cert: fs.readFileSync("./ssl/memories-food.online_bundle.crt"),
   });
   server.listen(process.env.SERVER_LISTEN_PORT);
 }

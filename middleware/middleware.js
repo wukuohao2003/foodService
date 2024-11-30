@@ -12,7 +12,7 @@ const logRequestDetails = (req, res, next) => {
 };
 
 const sqlSupport = (req, _, next) => {
-  const pool = mysql.createPool({
+  const $db = mysql.createConnection({
     host: process.env.SQL_CONNECT_HOST,
     user: process.env.SQL_CONNECT_USER,
     port: process.env.SQL_CONNECT_PORT,
@@ -22,7 +22,11 @@ const sqlSupport = (req, _, next) => {
     connectionLimit: 10,
     queueLimit: 0,
   });
-  req.$db = pool.promise();
+  req.sql = ({ sql, options = [], type = "Array" }, callback) => {
+    $db.query(sql, options, (error, result) => {
+      type === "Array" ? callback(error, result) : callback(error, result[0]);
+    });
+  };
   next();
 };
 
