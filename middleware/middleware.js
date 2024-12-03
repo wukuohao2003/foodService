@@ -1,10 +1,9 @@
 const mysql = require("mysql2");
-const ENUS = require("./language/en/en_US");
-const ZHCN = require("./language/zh/zh_CN");
-const ZHHK = require("./language/zh/zh_HK");
-const ZHTW = require("./language/zh/zh_TW");
-const JAJP = require("./language/ja/ja_JP");
-const { default: UniSMS } = require("unisms");
+const ENUS = require("../language/en/en_US");
+const JAJP = require("../language/ja/ja_JP");
+const ZHHK = require("../language/zh/zh_HK");
+const ZHTW = require("../language/zh/zh_TW");
+const ZHCN = require("../language/zh/zh_CN");
 
 const logRequestDetails = (req, res, next) => {
   const currentTime = new Date().toISOString();
@@ -20,7 +19,7 @@ const sqlSupport = (req, _, next) => {
     password: process.env.SQL_CONNECT_PASS,
     database: process.env.SQL_CONNECT_DB,
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 1000,
     queueLimit: 0,
   });
   req.sql = ({ sql, options = [], type = "Array" }, callback) => {
@@ -54,7 +53,7 @@ const languageResponse = (req, _, next) => {
 };
 
 const sourceVerify = (req, _, next) => {
-  if (req.url && req.url.split("/")[2] === "upload") {
+  if (req.url && req.url.split("/")[2] === "upload" && req.method == "POST") {
   }
   next();
 };
