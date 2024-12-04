@@ -19,12 +19,14 @@ const sqlSupport = (req, _, next) => {
     password: process.env.SQL_CONNECT_PASS,
     database: process.env.SQL_CONNECT_DB,
     waitForConnections: true,
-    connectionLimit: 1000,
+    connectionLimit: 10,
     queueLimit: 0,
   });
   req.sql = ({ sql, options = [], type = "Array" }, callback) => {
     $db.query(sql, options, (error, result) => {
-      type === "Array" ? callback(error, result) : callback(error, result[0]);
+      type === "Array"
+        ? callback(error, result)
+        : callback(error, result.length > 0 ? result[0] : {});
     });
   };
   next();

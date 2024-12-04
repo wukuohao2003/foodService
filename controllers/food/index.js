@@ -1,7 +1,7 @@
 const getFoodList = (req, res) => {
   req.sql(
     {
-      sql: "SELECT * FROM food ",
+      sql: "SELECT * FROM food",
     },
     (error, result) => {
       if (error) {
@@ -17,14 +17,16 @@ const getFoodList = (req, res) => {
           data: result,
         });
       }
-    }
+    },
   );
 };
 
 const getFoodOne = async (req, res) => {
   req.sql(
     {
-      sql: "SELECT * FROM food WHERE id = " + req.params.id,
+      sql: "SELECT * FROM food WHERE id = ?",
+      options: [req.params.id],
+      type: "Object",
     },
     (error, result) => {
       if (error) {
@@ -40,7 +42,7 @@ const getFoodOne = async (req, res) => {
           data: result,
         });
       }
-    }
+    },
   );
 };
 
