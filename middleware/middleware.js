@@ -24,6 +24,7 @@ const sqlSupport = (req, _, next) => {
   });
   req.sql = ({ sql, options = [], type = "Array" }, callback) => {
     $db.query(sql, options, (error, result) => {
+      console.log(error, result);
       type === "Array"
         ? callback(error, result)
         : callback(error, result.length > 0 ? result[0] : {});

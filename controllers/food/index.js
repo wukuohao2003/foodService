@@ -4,6 +4,7 @@ const getFoodList = (req, res) => {
       sql: "SELECT * FROM food",
     },
     (error, result) => {
+      console.log(result);
       if (error) {
         res.status(500).json({
           code: error.errno,
