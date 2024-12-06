@@ -1,7 +1,9 @@
 const getFoodList = (req, res) => {
+  const { languageCode, languageRegionCode } = req.query;
   req.sql(
     {
-      sql: "SELECT * FROM food",
+      sql: "SELECT * FROM food WHERE languageCode = ? AND languageRegionCode = ?",
+      options: [languageCode, languageRegionCode],
     },
     (error, result) => {
       console.log(result);
@@ -23,10 +25,12 @@ const getFoodList = (req, res) => {
 };
 
 const getFoodOne = async (req, res) => {
+  const { id } = req.params;
+  const { languageCode, languageRegionCode } = req.query;
   req.sql(
     {
-      sql: "SELECT * FROM food WHERE id = ?",
-      options: [req.params.id],
+      sql: "SELECT * FROM food WHERE id = ? AND languageCode = ? AND languageRegionCode = ?",
+      options: [id, languageCode, languageRegionCode],
       type: "Object",
     },
     (error, result) => {
