@@ -8,4 +8,12 @@ router.get("/user", (req, res) => {
   });
 });
 
+router.get("/verify", (req, res) => {
+  req.sms((error, result) => {
+    res.json({
+      result,
+      error,
+    });
+  });
+});
 module.exports = router;

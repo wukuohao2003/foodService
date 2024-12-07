@@ -4,6 +4,7 @@ const JAJP = require("../language/ja/ja_JP");
 const ZHHK = require("../language/zh/zh_HK");
 const ZHTW = require("../language/zh/zh_TW");
 const ZHCN = require("../language/zh/zh_CN");
+const { log } = require("console");
 
 const logRequestDetails = (req, res, next) => {
   const currentTime = new Date().toISOString();
@@ -28,6 +29,7 @@ const sqlSupport = (req, _, next) => {
       type === "Array"
         ? callback(error, result)
         : callback(error, result.length > 0 ? result[0] : {});
+      $db.end();
     });
   };
   next();
@@ -61,34 +63,9 @@ const sourceVerify = (req, _, next) => {
   next();
 };
 
-const getSmsCode = (req, _, next) => {
-  if (
-    req.url &&
-    req.url.split("?")[0].split("/")[2] === "verify" &&
-    req.method == "GET"
-  ) {
-    const { languageCode, languageRegionCode } = req.query;
-    if (languageCode == "en") {
-      req.template = "sms_temp_enUS";
-    } else if (languageCode == "zh") {
-      if (languageRegionCode == "CN") {
-        req.template = "sms_temp_zhCN";
-      } else {
-        req.template = "sms_temp_zhCN";
-      }
-    } else if (languageCode == "ja") {
-      req.template = "sms_temp_jsJP";
-    } else {
-      req.template = "sms_temp_enUS";
-    }
-  }
-  next();
-};
-
 module.exports = {
   logRequestDetails,
   sqlSupport,
   languageResponse,
   sourceVerify,
-  getSmsCode,
 };

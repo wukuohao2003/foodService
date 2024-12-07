@@ -16,7 +16,6 @@ const {
   sqlSupport,
   languageResponse,
   sourceVerify,
-  getSmsCode,
 } = require("./middleware/middleware");
 
 let server;
@@ -31,7 +30,6 @@ app.use(logRequestDetails);
 app.use(sqlSupport);
 app.use(languageResponse);
 app.use(sourceVerify);
-app.use(getSmsCode);
 
 app.use("/memories", user);
 app.use("/memories", food);
