@@ -1,19 +1,11 @@
 const express = require("express");
+const { sendSmsCode, getCountryList } = require("../../controllers/user");
 const router = express.Router();
 
-router.get("/user", (req, res) => {
-  console.log(req.message);
-  req.$db.execute("select * from user").then(([rows]) => {
-    res.json(rows);
-  });
-});
+// 获取国家信息
+router.get("/country", getCountryList);
 
-router.get("/verify", (req, res) => {
-  req.sms((error, result) => {
-    res.json({
-      result,
-      error,
-    });
-  });
-});
+// 获取验证码
+router.get("/verify", sendSmsCode);
+
 module.exports = router;

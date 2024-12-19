@@ -6,7 +6,6 @@ const getFoodList = (req, res) => {
       options: [languageCode, languageRegionCode],
     },
     (error, result) => {
-      console.log(result);
       if (error) {
         res.status(500).json({
           code: error.errno,
@@ -60,4 +59,6 @@ module.exports = {
   getFoodList,
   getFoodOne,
   addFood,
+  loadFood,
+  editFood,
 };

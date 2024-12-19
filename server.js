@@ -1,7 +1,5 @@
 require("dotenv").config();
-const fs = require("fs");
 const http = require("http");
-const https = require("https");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -37,13 +35,4 @@ app.use("/memories", comment);
 app.use("/memories", favourite);
 app.use("/memories", file);
 
-if (process.env.RUNNING_ENV === "development") {
-  server = http.createServer(app);
-} else if (process.env.RUNNING_ENV === "production") {
-  server = https.createServer(app, {
-    key: fs.readFileSync("./ssl/memories-food.online.key"),
-    cert: fs.readFileSync("./ssl/memories-food.online_bundle.crt"),
-  });
-}
-
-server.listen(process.env.SERVER_LISTEN_PORT);
+server = http.createServer(app).listen(process.env.SERVER_LISTEN_PORT);

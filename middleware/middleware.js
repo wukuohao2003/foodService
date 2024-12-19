@@ -4,7 +4,6 @@ const JAJP = require("../language/ja/ja_JP");
 const ZHHK = require("../language/zh/zh_HK");
 const ZHTW = require("../language/zh/zh_TW");
 const ZHCN = require("../language/zh/zh_CN");
-const { log } = require("console");
 
 const logRequestDetails = (req, res, next) => {
   const currentTime = new Date().toISOString();
@@ -25,7 +24,6 @@ const sqlSupport = (req, _, next) => {
   });
   req.sql = ({ sql, options = [], type = "Array" }, callback) => {
     $db.query(sql, options, (error, result) => {
-      console.log(error, result);
       type === "Array"
         ? callback(error, result)
         : callback(error, result.length > 0 ? result[0] : {});
@@ -58,7 +56,7 @@ const languageResponse = (req, _, next) => {
 };
 
 const sourceVerify = (req, _, next) => {
-  if (req.url && req.url.split("/")[2] === "upload" && req.method == "POST") {
+  if (req.url && req.url.split("/")[1] === "upload" && req.method == "POST") {
   }
   next();
 };
