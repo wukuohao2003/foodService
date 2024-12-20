@@ -5,6 +5,17 @@ const ZHHK = require("../language/zh/zh_HK");
 const ZHTW = require("../language/zh/zh_TW");
 const ZHCN = require("../language/zh/zh_CN");
 
+const $db = mysql.createPool({
+  host: process.env.SQL_CONNECT_HOST,
+  user: process.env.SQL_CONNECT_USER,
+  port: process.env.SQL_CONNECT_PORT,
+  password: process.env.SQL_CONNECT_PASS,
+  database: process.env.SQL_CONNECT_DB,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
+
 const logRequestDetails = (req, res, next) => {
   const currentTime = new Date().toISOString();
   console.info(`[${currentTime}] ${req.method} ${req.url} ${res.statusCode}`);
@@ -12,22 +23,11 @@ const logRequestDetails = (req, res, next) => {
 };
 
 const sqlSupport = (req, _, next) => {
-  const $db = mysql.createConnection({
-    host: process.env.SQL_CONNECT_HOST,
-    user: process.env.SQL_CONNECT_USER,
-    port: process.env.SQL_CONNECT_PORT,
-    password: process.env.SQL_CONNECT_PASS,
-    database: process.env.SQL_CONNECT_DB,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-  });
   req.sql = ({ sql, options = [], type = "Array" }, callback) => {
     $db.query(sql, options, (error, result) => {
       type === "Array"
         ? callback(error, result)
         : callback(error, result.length > 0 ? result[0] : {});
-      $db.end();
     });
   };
   next();
