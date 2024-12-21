@@ -54,7 +54,9 @@ const sendSmsCode = async (req, res) => {
     res.json({
       code: 500,
       msg: response.body.Message,
-      data: {},
+      data: {
+        serial: "",
+      },
     });
   }
 };
