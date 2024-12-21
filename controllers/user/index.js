@@ -1,3 +1,6 @@
+const { scheduleJob } = require("node-schedule");
+const { sendSMS } = require("../../utils/opensms");
+
 const getCountryList = (req, res) => {
   req.sql({ sql: "SELECT * FROM country" }, (error, result) => {
     if (error) {
@@ -16,7 +19,7 @@ const getCountryList = (req, res) => {
   });
 };
 
-const sendSmsCode = (req, res) => {
+const sendSmsCode = async (req, res) => {
   const { country, phone } = req.query;
   const getCode = () => {
     let defaultStr = "1234567890";
@@ -28,14 +31,74 @@ const sendSmsCode = (req, res) => {
   };
   const code = getCode();
   const phoneNumber = `${country}${phone}`;
-  res.json({
-    code: 200,
-    msg: "Success!",
-    data: {},
-  });
+  const response = await sendSMS(phoneNumber, code);
+  const createTime = new Date().getTime();
+  if (response.body.Code == "OK") {
+    global[response.body.RequestId] = {
+      verifyCode: code,
+      createTime,
+    };
+    scheduleJob(createTime + 3 * 60 * 1000, () => {
+      if (global[response.body.RequestId]) {
+        delete global[response.body.RequestId];
+      }
+    });
+    res.json({
+      code: 200,
+      msg: "Success!",
+      data: {
+        serial: response.body.RequestId,
+      },
+    });
+  } else {
+    res.json({
+      code: 500,
+      msg: response.body.Message,
+      data: {},
+    });
+  }
+};
+
+const verifyCode = (req, res) => {
+  const { code, serial } = req.body;
+  const verifyTime = new Date().getTime();
+  console.log(global[serial], code);
+
+  if (global[serial]) {
+    let createTime = global[serial].createTime;
+    if (verifyTime - createTime < 3 * 60 * 1000) {
+      if (global[serial].code == code) {
+        delete global[serial];
+        res.json({
+          code: 200,
+          msg: "Verify Success!",
+          data: {},
+        });
+      } else {
+        res.json({
+          code: 400,
+          msg: "The verification code is incorrect. Please enter it again.",
+          data: {},
+        });
+      }
+    } else {
+      res.json({
+        code: 410,
+        msg: "The verification code has expired. Please obtain it again.",
+        data: {},
+      });
+    }
+  } else {
+    res.json({
+      code: 404,
+      msg: "Please try to obtain the verification code again.",
+      data: {},
+    });
+  }
 };
 
 module.exports = {
   getCountryList,
   sendSmsCode,
+  verifyCode,
 };
