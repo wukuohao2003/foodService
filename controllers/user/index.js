@@ -43,7 +43,6 @@ const sendSmsCode = async (req, res) => {
         delete global[response.body.RequestId];
       }
     });
-    console.log(response.body.RequestId);
     
     res.json({
       code: 200,
@@ -66,15 +65,10 @@ const sendSmsCode = async (req, res) => {
 const verifyCode = (req, res) => {
   const { code, serial } = req.body;
   const verifyTime = new Date().getTime();
-  console.log(serial);
 
   if (global[serial]) {
-    console.log(1);
-    
     let createTime = global[serial].createTime;
     if (verifyTime - createTime < 3 * 60 * 1000) {
-      console.log(global[serial],code);
-      
       if (global[serial].verifyCode == code) {
         delete global[serial];
         res.json({

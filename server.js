@@ -4,6 +4,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const init = require("./routes/init/index")
 const user = require("./routes/user/index");
 const food = require("./routes/food/index");
 const comment = require("./routes/comment/index");
@@ -29,6 +30,7 @@ app.use(sqlSupport);
 app.use(languageResponse);
 app.use(sourceVerify);
 
+app.use("/memories", init)
 app.use("/memories", user);
 app.use("/memories", food);
 app.use("/memories", comment);
