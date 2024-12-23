@@ -1,18 +1,18 @@
 const bcrypt = require("bcrypt");
 
-const passwordEncode = (password, cb) => {
-  bcrypt.hash(password, 10, (err, hashedPassword) => {
-    cb(err, hashedPassword);
+const secretEncode = (secret, cb) => {
+  bcrypt.hash(secret, 10, (err, hashedSecret) => {
+    cb(err, hashedSecret);
   });
 };
 
-const passwordDecode = (password, matched, cb) => {
-  bcrypt.compare(password, matched, (err, isMatch) => {
+const secretDecode = (secret, matched, cb) => {
+  bcrypt.compare(secret, matched, (err, isMatch) => {
     cb(err, isMatch);
   });
 };
 
 module.exports = {
-  passwordEncode,
-  passwordDecode,
+  secretEncode,
+  secretDecode,
 };
