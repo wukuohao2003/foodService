@@ -1,6 +1,6 @@
 const { scheduleJob } = require("node-schedule");
 const { sendSMS } = require("../../utils/opensms");
-const { options } = require("../../routes/user");
+const jwt = require("jsonwebtoken")
 
 const getCountryList = (req, res) => {
   req.sql({ sql: "SELECT * FROM country" }, (error, result) => {
@@ -103,49 +103,55 @@ const verifyCode = (req, res) => {
 const createAndSign = (req, res) => {
   const { phoneNumber } = req.body
   req.sql({
-    sql:"SELECT id,status FROM user WHERE account=?",
-    options:[phoneNumber],
-  },(error,result) => {
+    sql: "SELECT id,nickName,status,avatar,createTime FROM user WHERE account=?",
+    options: [phoneNumber],
+  }, (error, result) => {
     if (error) {
-      res.status(500).json({
-        code: error.errno,
+      res.json({
+        code: 500,
         msg: error.sqlMessage,
         data: {},
       });
     } else {
-      if(result.length > 0 ) {
-        if(result[0].status == "normal") {
+      if (result.length > 0) {
+        if (result[0].status == "normal") {
+          const auth = jwt.sign(result[0],process.env.USER_TOKEN_KEY,{})
           res.json({
-            code:200,
-            msg:"The user status is normal.",
-            data:{}
+            code: 200,
+            msg: "The user status is normal.",
+            data: {
+              auth
+            }
           })
         }
         else {
           res.json({
-            code:403,
-            msg:"The user has been deactivated. Please wait for fifteen days or cancel the deactivation status.",
-            data:{}
+            code: 403,
+            msg: "The user has been deactivated. Please wait for fifteen days or cancel the deactivation status.",
+            data: {}
           })
         }
       }
       else {
         req.sql({
-          sql:"INSERT INTO user(account) VALUES(?)",
-          options:[phoneNumber],
-          type:"Object"
-        },(error,result) => {
+          sql: "INSERT INTO user(account) VALUES(?)",
+          options: [phoneNumber],
+          type: "Object"
+        }, (error, _) => {
           if (error) {
             res.json({
               code: 500,
               msg: error.sqlMessage,
               data: {},
             });
-          }else {
+          } else {
+            const auth = jwt.sign(result[0],process.env.USER_TOKEN_KEY,{})
             res.json({
-              code:403,
-              msg:"Registration succeeded.",
-              data:{}
+              code: 200,
+              msg: "Registration succeeded.",
+              data: {
+                auth
+              }
             })
           }
         })
