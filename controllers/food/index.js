@@ -2,8 +2,7 @@ const getFoodList = (req, res) => {
   const { languageCode, languageRegionCode } = req.query;
   req.sql(
     {
-      sql: "SELECT * FROM food WHERE languageCode = ? AND languageRegionCode = ?",
-      options: [languageCode, languageRegionCode],
+      sql: "SELECT * FROM food"
     },
     (error, result) => {
       if (error) {
