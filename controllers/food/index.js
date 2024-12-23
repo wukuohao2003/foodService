@@ -1,11 +1,11 @@
 const getFoodList = (req, res) => {
-  const { languageCode, languageRegionCode } = req.query;
   req.sql(
     {
-      sql: "SELECT ?,?,?,?,? FROM food",
-      options:["id","auth","title","finished","recommend"]
+      sql: "SELECT id,auth,title,finished,recommend,createTime FROM food",
     },
     (error, result) => {
+      console.log(result);
+      
       if (error) {
         res.status(500).json({
           code: error.errno,
