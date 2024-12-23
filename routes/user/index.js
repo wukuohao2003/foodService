@@ -3,6 +3,7 @@ const {
   sendSmsCode,
   getCountryList,
   verifyCode,
+  createAndSign,
 } = require("../../controllers/user");
 const router = express.Router();
 
@@ -14,5 +15,8 @@ router.get("/verify", sendSmsCode);
 
 // 验证码校验
 router.post("/verify", verifyCode);
+
+// 用户登录/注册
+router.post("/auth",createAndSign)
 
 module.exports = router;
