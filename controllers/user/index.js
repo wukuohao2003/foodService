@@ -1,7 +1,7 @@
 const { scheduleJob } = require("node-schedule");
 const { sendSMS } = require("../../utils/opensms");
 const jwt = require("jsonwebtoken");
-const { secretEncode } = require("../../utils/bcrypt");
+const { secretEncode, secretDecode } = require("../../utils/bcrypt");
 
 const getCountryList = (req, res) => {
   req.sql({ sql: "SELECT * FROM country" }, (error, result) => {
@@ -103,10 +103,9 @@ const verifyCode = (req, res) => {
 
 const createAndSign = (req, res) => {
   const { phoneNumber } = req.body
-  secretEncode(phoneNumber,(_,hashedSecret) => {
     req.sql({
       sql: "SELECT id,nickName,status,avatar,createTime FROM user WHERE account=?",
-      options: [hashedSecret],
+      options: [phoneNumber],
     }, (error, result) => {
       if (error) {
         res.json({
@@ -137,7 +136,7 @@ const createAndSign = (req, res) => {
         else {
           req.sql({
             sql: "INSERT INTO user(account) VALUES(?)",
-            options: [hashedSecret],
+            options: [phoneNumber],
             type: "Object"
           }, (error, _) => {
             if (error) {
@@ -175,8 +174,6 @@ const createAndSign = (req, res) => {
         }
       }
     })
-  })
-  
 }
 
 module.exports = {
