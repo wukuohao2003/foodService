@@ -148,7 +148,7 @@ const createAndSign = (req, res) => {
             } else {
               req.sql({
                 sql:"SELECT id,nickName,status,avatar,createTime FROM user WHERE account=?",
-                options:[hashedSecret],
+                options:[phoneNumber],
                 type:"Object"
               },(error,result) => {
                 if(error) {
