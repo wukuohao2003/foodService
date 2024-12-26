@@ -1,7 +1,6 @@
 const { scheduleJob } = require("node-schedule");
 const { sendSMS } = require("../../utils/opensms");
 const jwt = require("jsonwebtoken");
-const { secretEncode, secretDecode } = require("../../utils/bcrypt");
 
 const getCountryList = (req, res) => {
   req.sql({ sql: "SELECT * FROM country" }, (error, result) => {
