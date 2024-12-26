@@ -101,11 +101,13 @@ const verifyCode = (req, res) => {
 };
 
 const createAndSign = (req, res) => {
-  const { phoneNumber } = req.body
-    req.sql({
+  const { phoneNumber } = req.body;
+  req.sql(
+    {
       sql: "SELECT id,nickName,status,avatar,createTime FROM user WHERE account=?",
       options: [phoneNumber],
-    }, (error, result) => {
+    },
+    (error, result) => {
       if (error) {
         res.json({
           code: 500,
@@ -114,70 +116,79 @@ const createAndSign = (req, res) => {
         });
       } else {
         if (result.length > 0) {
+          console.log(result[0].status);
           if (result[0].status == "normal") {
-            const auth = jwt.sign(result[0],process.env.USER_TOKEN_KEY,{})
+            const auth = jwt.sign(result[0], process.env.USER_TOKEN_KEY, {});
             res.json({
               code: 200,
               msg: "The user status is normal.",
               data: {
-                auth
-              }
-            })
-          }
-          else {
+                auth,
+              },
+            });
+          } else {
             res.json({
               code: 403,
               msg: "The user has been deactivated. Please wait for fifteen days or cancel the deactivation status.",
-              data: {}
-            })
+              data: {},
+            });
           }
-        }
-        else {
-          req.sql({
-            sql: "INSERT INTO user(account) VALUES(?)",
-            options: [phoneNumber],
-            type: "Object"
-          }, (error, _) => {
-            if (error) {
-              res.json({
-                code: 500,
-                msg: error.sqlMessage,
-                data: {},
-              });
-            } else {
-              req.sql({
-                sql:"SELECT id,nickName,status,avatar,createTime FROM user WHERE account=?",
-                options:[phoneNumber],
-                type:"Object"
-              },(error,result) => {
-                if(error) {
-                  res.json({
-                    code:500,
-                    msg:error.sqlMessage,
-                    data:{}
-                  })
-                }else {
-                  const auth = jwt.sign(result,process.env.USER_TOKEN_KEY,{})
-                  res.json({
-                    code: 200,
-                    msg: "Registration succeeded.",
-                    data: {
-                      auth
+        } else {
+          req.sql(
+            {
+              sql: "INSERT INTO user(account) VALUES(?)",
+              options: [phoneNumber],
+              type: "Object",
+            },
+            (error, _) => {
+              if (error) {
+                res.json({
+                  code: 500,
+                  msg: error.sqlMessage,
+                  data: {},
+                });
+              } else {
+                req.sql(
+                  {
+                    sql: "SELECT id,nickName,status,avatar,createTime FROM user WHERE account=?",
+                    options: [phoneNumber],
+                    type: "Object",
+                  },
+                  (error, result) => {
+                    if (error) {
+                      res.json({
+                        code: 500,
+                        msg: error.sqlMessage,
+                        data: {},
+                      });
+                    } else {
+                      const auth = jwt.sign(
+                        result,
+                        process.env.USER_TOKEN_KEY,
+                        {},
+                      );
+                      res.json({
+                        code: 200,
+                        msg: "Registration succeeded.",
+                        data: {
+                          auth,
+                        },
+                      });
                     }
-                  })
-                }
-              })
-              
-            }
-          })
+                  },
+                );
+              }
+            },
+          );
         }
       }
-    })
-}
+    },
+  );
+};
 
 module.exports = {
   getCountryList,
   sendSmsCode,
   verifyCode,
-  createAndSign
+  createAndSign,
 };
