@@ -116,7 +116,7 @@ const createAndSign = (req, res) => {
         });
       } else {
         if (result.length > 0) {
-          console.log(result[0].status);
+          console.log(result[0].status, "==================", result);
           if (result[0].status == "normal") {
             const auth = jwt.sign(result[0], process.env.USER_TOKEN_KEY, {});
             res.json({
