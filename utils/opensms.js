@@ -25,7 +25,7 @@ const Client = {
       new OpenApi.OpenApiRequest({
         query: OpenApiUtil.default.query({
           PhoneNumbers,
-          SignName: "食忆",
+          SignName: "测MemoRecipe",
           TemplateCode: "SMS_476785115",
           TemplateParam: JSON.stringify({
             code,
