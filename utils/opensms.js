@@ -26,7 +26,7 @@ const Client = {
         query: OpenApiUtil.default.query({
           PhoneNumbers,
           SignName: "测MemoRecipe",
-          TemplateCode: "SMS_476865349",
+          TemplateCode: "SMS_476805402",
           TemplateParam: JSON.stringify({
             code,
           }),
